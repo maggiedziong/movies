@@ -1,18 +1,31 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Box, Paper } from "@material-ui/core";
-import { MovieGridProps, Movies } from "./types";
+import Rating from "@material-ui/lab/Rating";
+
+import { MovieGridProps, Movies } from "../../types";
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    height: "100%",
+  },
+  title: {
+    display: "flex",
+    alignItems: "flex-end",
+    flexGrow: 1,
+  },
   poster: {
     backgroundSize: "contain",
     backgroundRepeat: "no-repeat",
     backgroundColor: "black",
     width: "100%",
-    paddingTop: "144%",
+    paddingTop: "150%",
+    marginBottom: "10px",
   },
   genre: {
-    marginRight: "10px",
     display: "inline-block",
     padding: "0 5px",
     background: theme.palette.primary.main,
@@ -25,33 +38,34 @@ const useStyles = makeStyles((theme) => ({
 
 const MovieGrid: React.FC<MovieGridProps> = ({ movies }) => {
   const classes = useStyles();
-
-  console.log(movies);
-
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={3}>
       {movies.map((movie: Movies, i: number) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} spacing={3} key={movie.key}>
-          <Paper>
-            <h3>{movie.title}</h3>
-
+        <Grid item xs={6} sm={4} md={3} lg={2} key={movie.key}>
+          <Box className={classes.container}>
+            <h3 className={classes.title}>{movie.title}</h3>
             <div
               className={classes.poster}
               style={{ backgroundImage: "url(" + movie.image + ")" }}
-            >
-              <span>{movie.rating} / 10</span>
-            </div>
+            ></div>
 
-            <Box>
+            {/* 
+            <Box className={classes.genre}>
               {movie.genres.map((genre) => (
-                <span className={classes.genre} key={genre}>
-                  {genre}
-                </span>
+                <span key={genre}>{genre}</span>
               ))}
-            </Box>
+            </Box> */}
+            <Rating
+              name="half-rating-read"
+              value={movie.rating}
+              size="small"
+              precision={0.5}
+              readOnly
+              max={10}
+            />
 
             <div className={classes.summary}>{movie.summary}</div>
-          </Paper>
+          </Box>
         </Grid>
       ))}
     </Grid>

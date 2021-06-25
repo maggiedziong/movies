@@ -3,30 +3,11 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
 import MovieGrid from "../components/MovieGrid";
-import { Movies } from "../components/MovieGrid/types";
+import { Movies, MovieProps, GenreProps, FilmProps } from "../types";
 import Layout, { siteTitle } from "../components/layout";
 import { getSortedPostsData } from "../lib/posts";
 import { GetStaticProps } from "next";
 import axios from "axios";
-
-type Images = {
-  base_url: string;
-  poster_sizes: string[];
-};
-
-type MovieProps = {
-  genre_ids: number[];
-  title: string;
-  popularity: number;
-  vote_average: number;
-  overview: string;
-  poster_path: string;
-};
-
-type GenreProps = {
-  id: number;
-  name: string;
-};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,40 +30,47 @@ const useStyles = makeStyles((theme) => ({
 const Home = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
-  const [movieData, setMovieData] = useState([]);
-  const [genreData, setGenreData] = useState([]);
-  const [imageData, setImageData] = useState<Images>();
+  const [movieData, setMovieData] = useState<MovieProps>();
   const [movies, setMovies] = useState<Movies[]>([]);
 
   const sortMovies = () => {
-    const cleanMovies = movieData.map((movie: MovieProps, i: number) => {
-      const imgURL = imageData?.base_url ?? "/coming-soon.jpeg";
-      const imgSize = imageData?.poster_sizes[4] ?? "";
-      const cx = imgURL + imgSize + movie.poster_path;
+    console.log("----");
+    console.log("data");
+    console.log(movieData);
+    console.log("----");
 
-      const sortGenres = movie.genre_ids.map((id: number) =>
-        genreData
-          .filter((g: GenreProps) => id === g.id)
-          .map((g: any) => g.name)
-          .toString()
-      );
+    const cleanMovies =
+      movieData &&
+      movieData.films.map((movie: FilmProps, i: number) => {
+        const imgURL = movieData.images.base_url ?? "/coming-soon.jpeg";
+        const imgSize = movieData.images.poster_sizes[4] ?? "";
+        const cx = imgURL + imgSize + movie.poster_path;
 
-      const movieDataFiltered = {
-        key: i,
-        title: movie.title,
-        popularity: movie.popularity,
-        rating: movie.vote_average,
-        genres: sortGenres,
-        summary: movie.overview,
-        image: cx,
-      };
+        const sortGenres = movie.genre_ids.map((id: number) =>
+          movieData.genres
+            .filter((g: GenreProps) => id === g.id)
+            .map((g: any) => g.name)
+            .toString()
+        );
 
-      setMovies((oldMovies) => [...oldMovies, movieDataFiltered]);
+        const movieDataFiltered = {
+          key: i,
+          title: movie.title,
+          language: movie.original_language,
+          popularity: movie.popularity,
+          releaseDate: movie.release_date,
+          rating: movie.vote_average,
+          genres: sortGenres,
+          summary: movie.overview,
+          image: cx,
+        };
 
-      return movieDataFiltered;
-    });
+        if (!movies.some((movie) => movie.key === movieDataFiltered.key)) {
+          setMovies((currentMovies) => [...currentMovies, movieDataFiltered]);
+        }
 
-    return cleanMovies;
+        return movieDataFiltered;
+      });
   };
 
   useEffect(() => {
@@ -97,14 +85,13 @@ const Home = () => {
         axios.get(dbUrl + "configuration?api_key=" + apiKey),
       ]).then(
         axios.spread((...responses) => {
-          setMovieData(responses[0].data.results);
-          setGenreData(responses[1].data.genres);
-          setImageData(responses[2].data.images);
-          console.log(responses[0].data.results);
-          // console.log(responses[1].data.genres);
-          // console.log(responses[2].data.images);
+          const moviesData: MovieProps = {
+            films: responses[0].data.results,
+            genres: responses[1].data.genres,
+            images: responses[2].data.images,
+          };
+          setMovieData(moviesData);
           setLoading(false);
-          sortMovies();
         })
       );
     };
@@ -112,45 +99,23 @@ const Home = () => {
     fetchMovieData();
   }, []);
 
+  useEffect(() => {
+    sortMovies();
+  }, [movieData]);
+
   return (
     <Layout home>
       <Head>
         <title>{siteTitle}</title>
       </Head>
 
-      {/* <Container className={classes.root}> */}
       {loading ? (
         <div className={classes.loaderWrapper}>
           <LinearProgress className={classes.progress} />
         </div>
       ) : (
-        movieData && <MovieGrid movies={movies} />
+        <MovieGrid movies={movies} />
       )}
-      {/* </Container> */}
-
-      {/* <section className={utilStyles.headingMd}>
-        <p>[Your Self Introduction]</p>
-        <p>
-          (This is a sample website - you’ll be building a site like this in{" "}
-          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
-        </p>
-      </section>
-      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-        <h2 className={utilStyles.headingLg}>Blog</h2>
-        <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
-            <li className={utilStyles.listItem} key={id}>
-              <Link href={`/posts/${id}`}>
-                <a>{title}</a>
-              </Link>
-              <br />
-              <small className={utilStyles.lightText}>
-                <Date dateString={date} />
-              </small>
-            </li>
-          ))}
-        </ul>
-      </section> */}
     </Layout>
   );
 };

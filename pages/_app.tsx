@@ -19,8 +19,8 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   const generateClassName = createGenerateClassName({
-    productionPrefix: "c",
-    disableGlobal: true,
+    // productionPrefix: "c",
+    // disableGlobal: true,
   });
 
   return (

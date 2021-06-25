@@ -1,6 +1,6 @@
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
+import { Container } from "@material-ui/core";
 import Header from "./Header";
 
 export const siteTitle = "Wanna see a Movie?";
@@ -30,7 +30,7 @@ export default function Layout({
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <Header />
-      <main>{children}</main>
+      <Container> {children}</Container>
       {!home && (
         <div>
           <Link href="/">
