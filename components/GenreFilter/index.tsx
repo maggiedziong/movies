@@ -54,7 +54,7 @@ const GenreFilter: React.FC<Props> = ({
   const classes = useStyles();
 
   return (
-    <Accordion>
+    <Accordion className={classes.accordion}>
       <AccordionSummary
         expandIcon={<FilterList />}
         aria-controls="panel1a-content"
