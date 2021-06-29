@@ -5,6 +5,7 @@ import { LinearProgress } from "@material-ui/core";
 import MovieGrid from "../components/MovieGrid";
 import GenreFilter from "../components/GenreFilter";
 import RatingFilter from "../components/RatingFilter";
+import SortBy from "../components/SortBy";
 import { Movies, MovieProps, GenreProps, FilmProps } from "../types";
 import Layout, { siteTitle } from "../components/layout";
 import { getSortedPostsData } from "../lib/posts";
@@ -29,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
   },
   filterWrapper: {
     marginBottom: "30px",
+    display: "flex",
+    alignItems: "flex-end",
   },
 }));
 
@@ -41,6 +44,7 @@ const Home = () => {
   const [activeGenres, setActiveGenres] = useState<GenreProps[]>([]); // genres for the listing only
   const [genreFilter, setGenreFilter] = useState([]); // currently selected genres in the filter
   const [ratingFilter, setRatingFilter] = useState<number>(5); // currently selected genres in the filter
+  const [sortBy, setSortBy] = useState<string>();
 
   const sortMovies = () => {
     const imgURL = movieData?.images.base_url ?? "/coming-soon.jpeg";
@@ -137,20 +141,24 @@ const Home = () => {
       ) : (
         <>
           <div className={classes.filterWrapper}>
-            <GenreFilter
-              genreFilter={activeGenres}
-              activeFilter={genreFilter}
-              filterAction={(genre) => filterByGenre(genre)}
-            />
-            <RatingFilter
-              rating={ratingFilter}
-              filterAction={(r) => setRatingFilter(r)}
-            />
+            <div>
+              <GenreFilter
+                genreFilter={activeGenres}
+                activeFilter={genreFilter}
+                filterAction={(genre) => filterByGenre(genre)}
+              />
+              <RatingFilter
+                rating={ratingFilter}
+                filterAction={(r) => setRatingFilter(r)}
+              />
+            </div>
+            <SortBy sortAction={(s) => setSortBy(s)} />
           </div>
           <MovieGrid
             movies={movies}
             filterGenres={genreFilter}
             filterRating={ratingFilter}
+            sortBy={sortBy}
           />
         </>
       )}

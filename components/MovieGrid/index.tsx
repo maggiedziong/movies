@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Box } from "@material-ui/core";
 import { MovieGridProps, Movies } from "../../types";
 import MoviePod from "../MoviePod";
+import { SortByAlphaSharp } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   oops: {
@@ -23,9 +24,26 @@ const MovieGrid: React.FC<MovieGridProps> = ({
   movies,
   filterGenres,
   filterRating,
+  sortBy,
 }) => {
   const classes = useStyles();
-  const filteredMovies = movies.filter((m) =>
+
+  const sortAlphabeticaly = (a, b) => a.title.localeCompare(b.title);
+  const sortByDate = (a, b) =>
+    b.releaseDate.replace(/-/g, "").valueOf() -
+    a.releaseDate.replace(/-/g, "").valueOf();
+  const sortByPopularity = (a, b) =>
+    b.popularity.valueOf() - a.popularity.valueOf();
+
+  const sortByThis = (a, b) =>
+    sortBy === "az"
+      ? sortAlphabeticaly(a, b)
+      : sortBy === "rd"
+      ? sortByDate(a, b)
+      : sortByPopularity(a, b);
+  const sortedMovies = movies.sort((a, b) => sortByThis(a, b));
+
+  const filteredMovies = sortedMovies.filter((m) =>
     m.genres.some((g) => filterGenres.includes(g))
   );
   const finalMovieList = filteredMovies.length !== 0 ? filteredMovies : movies;

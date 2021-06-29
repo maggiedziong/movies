@@ -2,6 +2,7 @@ export type MovieGridProps = {
   movies: Movies[];
   filterGenres?: string[];
   filterRating?: number;
+  sortBy?: string;
 };
 
 export interface Movies {
