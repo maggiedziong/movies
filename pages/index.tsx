@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
 import MovieGrid from "../components/MovieGrid";
+import Filter from "../components/Filter";
 import { Movies, MovieProps, GenreProps, FilmProps } from "../types";
 import Layout, { siteTitle } from "../components/layout";
 import { getSortedPostsData } from "../lib/posts";
@@ -32,6 +33,10 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [movieData, setMovieData] = useState<MovieProps>();
   const [movies, setMovies] = useState<Movies[]>([]);
+  const [allGenres, setAllGenres] = useState<GenreProps[]>([]); // all genres from the api
+  const [activeGenres, setActiveGenres] = useState([]); // genres for the listing only
+  const [genreFilter, setGenreFilter] = useState([]); // currently selected genres in the filter
+  const fml = [];
 
   const sortMovies = () => {
     console.log("----");
@@ -39,38 +44,42 @@ const Home = () => {
     console.log(movieData);
     console.log("----");
 
-    const cleanMovies =
-      movieData &&
-      movieData.films.map((movie: FilmProps, i: number) => {
-        const imgURL = movieData.images.base_url ?? "/coming-soon.jpeg";
-        const imgSize = movieData.images.poster_sizes[4] ?? "";
-        const cx = imgURL + imgSize + movie.poster_path;
+    const cleanMovies = movieData?.films.map((movie: FilmProps, i: number) => {
+      const imgURL = movieData.images.base_url ?? "/coming-soon.jpeg";
+      const imgSize = movieData.images.poster_sizes[4] ?? "";
+      const cx = imgURL + imgSize + movie.poster_path;
 
-        const sortGenres = movie.genre_ids.map((id: number) =>
-          movieData.genres
-            .filter((g: GenreProps) => id === g.id)
-            .map((g: any) => g.name)
-            .toString()
-        );
+      const sortGenres = movie.genre_ids.map((id: number) =>
+        allGenres
+          ?.filter((g: GenreProps) => id === g.id)
+          .map((g: any) => g.name)
+          .toString()
+      );
 
-        const movieDataFiltered = {
-          key: i,
-          title: movie.title,
-          language: movie.original_language,
-          popularity: movie.popularity,
-          releaseDate: movie.release_date,
-          rating: movie.vote_average,
-          genres: sortGenres,
-          summary: movie.overview,
-          image: cx,
-        };
+      const movieDataFiltered = {
+        key: i,
+        title: movie.title,
+        language: movie.original_language,
+        popularity: movie.popularity,
+        releaseDate: movie.release_date,
+        rating: movie.vote_average,
+        genres: sortGenres,
+        summary: movie.overview,
+        image: cx,
+      };
 
-        if (!movies.some((movie) => movie.key === movieDataFiltered.key)) {
-          setMovies((currentMovies) => [...currentMovies, movieDataFiltered]);
-        }
+      if (!movies.some((movie) => movie.key === movieDataFiltered.key)) {
+        setMovies((currentMovies) => [...currentMovies, movieDataFiltered]);
+      }
 
-        return movieDataFiltered;
+      sortGenres.map((g) => {
+        const item = { name: g, number: 0 };
+        fml.includes(g) ? console.log(fml) : fml.push(item);
+        setActiveGenres([...fml]);
       });
+
+      return movieDataFiltered;
+    });
   };
 
   useEffect(() => {
@@ -87,9 +96,9 @@ const Home = () => {
         axios.spread((...responses) => {
           const moviesData: MovieProps = {
             films: responses[0].data.results,
-            genres: responses[1].data.genres,
             images: responses[2].data.images,
           };
+          setAllGenres(responses[1].data.genres);
           setMovieData(moviesData);
           setLoading(false);
         })
@@ -101,7 +110,20 @@ const Home = () => {
 
   useEffect(() => {
     sortMovies();
+    console.log("activeGenres ", activeGenres);
+    console.log("fml", fml);
   }, [movieData]);
+
+  const filterByGenre = (genre: GenreProps) => {
+    console.log("genre: ", genre);
+
+    if (genreFilter.includes(genre)) {
+      const newList = genreFilter.filter((g) => g !== genre);
+      setGenreFilter(newList);
+    } else {
+      setGenreFilter([...genreFilter, genre]);
+    }
+  };
 
   return (
     <Layout home>
@@ -114,7 +136,18 @@ const Home = () => {
           <LinearProgress className={classes.progress} />
         </div>
       ) : (
-        <MovieGrid movies={movies} />
+        <>
+          <Filter
+            genreFilter={activeGenres}
+            activeFilter={genreFilter}
+            filterAction={(genre) => filterByGenre(genre)}
+          />
+
+          {/* {activeGenres.map((g) => (
+            <div key={g}>{g}</div>
+          ))} */}
+          <MovieGrid movies={movies} filterGenres={genreFilter} />
+        </>
       )}
     </Layout>
   );

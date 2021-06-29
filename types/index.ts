@@ -1,5 +1,6 @@
 export type MovieGridProps = {
   movies: Movies[];
+  filterGenres?: string[];
 };
 
 export interface Movies {
@@ -33,8 +34,11 @@ export type GenreProps = {
   name: string;
 };
 
+export type GenreArrayProps = {
+  genreFilter: GenreProps[];
+};
+
 export type MovieProps = {
-  genres: GenreProps[];
   images: ImageProps;
   films: FilmProps[];
 };
