@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
   progress: {
     width: "80%",
   },
+  filterWrapper: {
+    marginBottom: "30px",
+  },
 }));
 
 const Home = () => {
@@ -133,15 +136,17 @@ const Home = () => {
         </div>
       ) : (
         <>
-          <GenreFilter
-            genreFilter={activeGenres}
-            activeFilter={genreFilter}
-            filterAction={(genre) => filterByGenre(genre)}
-          />
-          <RatingFilter
-            rating={ratingFilter}
-            filterAction={(r) => setRatingFilter(r)}
-          />
+          <div className={classes.filterWrapper}>
+            <GenreFilter
+              genreFilter={activeGenres}
+              activeFilter={genreFilter}
+              filterAction={(genre) => filterByGenre(genre)}
+            />
+            <RatingFilter
+              rating={ratingFilter}
+              filterAction={(r) => setRatingFilter(r)}
+            />
+          </div>
           <MovieGrid
             movies={movies}
             filterGenres={genreFilter}
