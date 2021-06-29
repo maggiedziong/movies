@@ -49,11 +49,11 @@ const MoviePod: React.FC<Props> = ({ movie }) => {
         style={{ backgroundImage: "url(" + movie.image + ")" }}
       ></div>
 
-      <Box className={classes.genre}>
+      {/* <Box className={classes.genre}>
         {movie.genres.map((genre) => (
           <span key={genre}>{genre}</span>
         ))}
-      </Box>
+      </Box> */}
       <Rating
         name="half-rating-read"
         value={movie.rating}

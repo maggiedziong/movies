@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
 import MovieGrid from "../components/MovieGrid";
-import Filter from "../components/Filter";
+import GenreFilter from "../components/GenreFilter";
+import RatingFilter from "../components/RatingFilter";
 import { Movies, MovieProps, GenreProps, FilmProps } from "../types";
 import Layout, { siteTitle } from "../components/layout";
 import { getSortedPostsData } from "../lib/posts";
@@ -34,27 +35,30 @@ const Home = () => {
   const [movieData, setMovieData] = useState<MovieProps>();
   const [movies, setMovies] = useState<Movies[]>([]);
   const [allGenres, setAllGenres] = useState<GenreProps[]>([]); // all genres from the api
-  const [activeGenres, setActiveGenres] = useState([]); // genres for the listing only
+  const [activeGenres, setActiveGenres] = useState<GenreProps[]>([]); // genres for the listing only
   const [genreFilter, setGenreFilter] = useState([]); // currently selected genres in the filter
-  const fml = [];
+  const [ratingFilter, setRatingFilter] = useState<number>(5); // currently selected genres in the filter
 
   const sortMovies = () => {
-    console.log("----");
-    console.log("data");
-    console.log(movieData);
-    console.log("----");
+    const imgURL = movieData?.images.base_url ?? "/coming-soon.jpeg";
+    const imgSize = movieData?.images.poster_sizes[4] ?? "";
+    const genreStore = [];
+    const movieStore = [];
 
     const cleanMovies = movieData?.films.map((movie: FilmProps, i: number) => {
-      const imgURL = movieData.images.base_url ?? "/coming-soon.jpeg";
-      const imgSize = movieData.images.poster_sizes[4] ?? "";
-      const cx = imgURL + imgSize + movie.poster_path;
+      const sortGenres = movie.genre_ids.map((id: number) => {
+        const genreNames = allGenres.find((g) => g.id === id).name;
+        const obj = { id: id, name: genreNames, value: 1 };
 
-      const sortGenres = movie.genre_ids.map((id: number) =>
-        allGenres
-          ?.filter((g: GenreProps) => id === g.id)
-          .map((g: any) => g.name)
-          .toString()
-      );
+        if (genreStore.some((g) => g.id === obj.id)) {
+          const getItem = genreStore.findIndex((f) => f.id === obj.id);
+          genreStore[getItem].value = genreStore[getItem].value + 1;
+        } else {
+          genreStore.push(obj);
+        }
+
+        return genreNames;
+      });
 
       const movieDataFiltered = {
         key: i,
@@ -65,21 +69,17 @@ const Home = () => {
         rating: movie.vote_average,
         genres: sortGenres,
         summary: movie.overview,
-        image: cx,
+        image: imgURL + imgSize + movie.poster_path,
       };
 
-      if (!movies.some((movie) => movie.key === movieDataFiltered.key)) {
-        setMovies((currentMovies) => [...currentMovies, movieDataFiltered]);
+      console.log(movieDataFiltered);
+      if (!movieStore.some((movie) => movie.key === movieDataFiltered.key)) {
+        movieStore.push(movieDataFiltered);
       }
-
-      sortGenres.map((g) => {
-        const item = { name: g, number: 0 };
-        fml.includes(g) ? console.log(fml) : fml.push(item);
-        setActiveGenres([...fml]);
-      });
-
-      return movieDataFiltered;
     });
+
+    setActiveGenres(genreStore);
+    setMovies(movieStore);
   };
 
   useEffect(() => {
@@ -110,13 +110,9 @@ const Home = () => {
 
   useEffect(() => {
     sortMovies();
-    console.log("activeGenres ", activeGenres);
-    console.log("fml", fml);
   }, [movieData]);
 
   const filterByGenre = (genre: GenreProps) => {
-    console.log("genre: ", genre);
-
     if (genreFilter.includes(genre)) {
       const newList = genreFilter.filter((g) => g !== genre);
       setGenreFilter(newList);
@@ -137,16 +133,20 @@ const Home = () => {
         </div>
       ) : (
         <>
-          <Filter
+          <GenreFilter
             genreFilter={activeGenres}
             activeFilter={genreFilter}
             filterAction={(genre) => filterByGenre(genre)}
           />
-
-          {/* {activeGenres.map((g) => (
-            <div key={g}>{g}</div>
-          ))} */}
-          <MovieGrid movies={movies} filterGenres={genreFilter} />
+          <RatingFilter
+            rating={ratingFilter}
+            filterAction={(r) => setRatingFilter(r)}
+          />
+          <MovieGrid
+            movies={movies}
+            filterGenres={genreFilter}
+            filterRating={ratingFilter}
+          />
         </>
       )}
     </Layout>

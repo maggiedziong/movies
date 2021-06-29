@@ -1,6 +1,7 @@
 export type MovieGridProps = {
   movies: Movies[];
   filterGenres?: string[];
+  filterRating?: number;
 };
 
 export interface Movies {
@@ -32,6 +33,7 @@ export type FilmProps = {
 export type GenreProps = {
   id: number;
   name: string;
+  value?: number;
 };
 
 export type GenreArrayProps = {

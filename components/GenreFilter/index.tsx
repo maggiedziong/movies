@@ -14,17 +14,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  genreFilter: string[];
+  genreFilter: [
+    {
+      id: number;
+      name: string;
+      value: number;
+    }
+  ];
   activeFilter: string[];
   filterAction: (genre) => void;
 };
 
-const MovieGrid: React.FC<Props> = ({
+const GenreFilter: React.FC<Props> = ({
   genreFilter,
   filterAction,
   activeFilter,
 }) => {
   const classes = useStyles();
+
   return (
     <Grid container spacing={3}>
       <h3> </h3>
@@ -33,12 +40,13 @@ const MovieGrid: React.FC<Props> = ({
           {genreFilter.map((g) => (
             <Button
               onClick={() => {
-                filterAction(g);
+                filterAction(g.name);
               }}
-              key={g}
-              color={activeFilter.includes(g) ? "primary" : "default"}
+              key={g.id}
+              color={activeFilter.includes(g.name) ? "primary" : "default"}
             >
-              {g}
+              {g.name}
+              {"   "}({g.value})
             </Button>
           ))}
         </div>
@@ -47,4 +55,4 @@ const MovieGrid: React.FC<Props> = ({
   );
 };
 
-export default MovieGrid;
+export default GenreFilter;
