@@ -27,7 +27,7 @@ const SortBy: React.FC<Props> = ({ sortAction }) => {
       <Select
         labelId="demo-simple-select-filled-label"
         id="demo-simple-select-filled"
-        value={sort}
+        value={sort ? sort : ""}
         label="Sort by"
         onChange={(e) => setSortVal(e.target.value)}
       >

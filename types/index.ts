@@ -44,4 +44,5 @@ export type GenreArrayProps = {
 export type MovieProps = {
   images: ImageProps;
   films: FilmProps[];
+  genres?: GenreProps[];
 };
