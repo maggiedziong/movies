@@ -53,7 +53,7 @@ const MovieGrid: React.FC<MovieGridProps> = ({
     <Grid container spacing={3}>
       {ratingFilter.length ? (
         ratingFilter.map((movie: Movies, i: number) => (
-          <Grid item xs={6} sm={4} md={3} lg={2} key={movie.key}>
+          <Grid item xs={6} sm={4} md={3} lg={2} key={movie.id}>
             <MoviePod movie={movie} />
           </Grid>
         ))

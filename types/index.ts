@@ -6,8 +6,9 @@ export type MovieGridProps = {
 };
 
 export interface Movies {
-  key: number;
+  id: number;
   title: string;
+  slug: string;
   popularity: number;
   rating: number;
   genres: string[];
@@ -21,6 +22,7 @@ export type ImageProps = {
 };
 
 export type FilmProps = {
+  id: number;
   genre_ids: number[];
   title: string;
   popularity: number;

@@ -1,47 +1,39 @@
 import axios from "axios";
 import { FilmProps } from "../types";
 
-export const fetchAPI = async (path: string) => {
-  const apiKey = "97ddb8ca2d59ad40b178f1c6b2b8747b";
+const fetchAPI = async (path: string, query?: string) => {
+  const apiKey = "?api_key=97ddb8ca2d59ad40b178f1c6b2b8747b";
   const dbUrl = "https://api.themoviedb.org/3/";
   const settings = "&language=en-US&page=1";
+  const optionalQuery = query ? query : "";
 
   try {
-    const response = await axios.get(dbUrl + path + apiKey + settings);
+    const response = await axios.get(
+      dbUrl + path + apiKey + settings + optionalQuery
+    );
     return response;
   } catch (error) {
     console.error(error);
   }
 };
 
-export const getNowShowing = async () => {
-  const showing = await fetchAPI("movie/now_playing?api_key=");
+const getNowShowing = async () => {
+  const showing = await fetchAPI("movie/now_playing");
   const r = showing.data.results;
+  // console.error(r);
   return r;
 };
 
-export const getGenres = async () => {
-  const genres = await fetchAPI("genre/movie/list?api_key=");
+const getGenres = async () => {
+  const genres = await fetchAPI("genre/movie/list");
   const r = genres.data.genres;
-  // const res = JSON.stringify({ r });
   return r;
 };
 
 export const getImageSettings = async () => {
-  const genres = await fetchAPI("configuration?api_key=");
+  const genres = await fetchAPI("configuration");
   const r = genres.data.images;
-
   return r;
-};
-
-//todo delete?
-export const movieContent = async () => {
-  const moviesData = {
-    films: await getNowShowing(),
-    images: getImageSettings(),
-  };
-
-  return moviesData;
 };
 
 export const nameGenres = (movie, genreContent) => {
@@ -60,10 +52,11 @@ export const sortMovies = async () => {
 
   const movieStore = [];
 
-  const cleanMovies = movieContent.map((movie: FilmProps, i: number) => {
+  const cleanMovies = movieContent.map((movie: FilmProps) => {
     const movieDataFiltered = {
-      key: i,
+      id: movie.id,
       title: movie.title,
+      slug: movie.title.replace(/\s+/g, "-").toLowerCase(),
       language: movie.original_language,
       popularity: movie.popularity,
       releaseDate: movie.release_date,
@@ -73,7 +66,7 @@ export const sortMovies = async () => {
       image: imgURL + imgSize + movie.poster_path,
     };
 
-    if (!movieStore.some((movie) => movie.key === movieDataFiltered.key)) {
+    if (!movieStore.some((movie) => movie.key === movieDataFiltered.id)) {
       movieStore.push({ ...movieDataFiltered });
     }
 
@@ -103,4 +96,14 @@ export const genreList = async () => {
   });
 
   return genreStore;
+};
+
+export const filmDetails = async (slug) => {
+  const allMovies = await sortMovies();
+  const getID = allMovies.find((m) => m.slug === slug).id;
+  const film = await fetchAPI(`movie/${getID}&append_to_response=videos`);
+  console.log("film");
+  console.log(film);
+
+  return film.data;
 };

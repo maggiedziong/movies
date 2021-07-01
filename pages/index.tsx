@@ -37,8 +37,7 @@ const useStyles = makeStyles((theme) => ({
 const Home = ({ movieContent, genreContent }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
-  const [movies, setMovies] = useState<Movies[]>(movieContent);
-  const [activeGenres, setActiveGenres] = useState<GenreProps[]>(genreContent); // genres for the listing only
+  const [movies, setMovies] = useState<Movies[]>();
   const [genreFilter, setGenreFilter] = useState([]); // currently selected genres in the filter
   const [ratingFilter, setRatingFilter] = useState<number>(5); // currently selected genres in the filter
   const [sortBy, setSortBy] = useState<string>();
@@ -76,7 +75,7 @@ const Home = ({ movieContent, genreContent }) => {
           <div className={classes.filterWrapper}>
             <div>
               <GenreFilter
-                genreFilter={activeGenres}
+                genreFilter={genreContent}
                 activeFilter={genreFilter}
                 filterAction={(genre) => filterByGenre(genre)}
               />
