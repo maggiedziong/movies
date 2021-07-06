@@ -8,9 +8,11 @@ export const siteTitle = "Wanna see a Movie?";
 export default function Layout({
   children,
   home,
+  header,
 }: {
   children: React.ReactNode;
   home?: boolean;
+  header?: string;
 }) {
   return (
     <div>
@@ -29,7 +31,7 @@ export default function Layout({
         <meta name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <Header />
+      {header && <Header title={header} />}
       <Container> {children}</Container>
       {!home && (
         <div>

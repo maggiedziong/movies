@@ -61,7 +61,7 @@ const Home = ({ movieContent, genreContent }) => {
   };
 
   return (
-    <Layout home>
+    <Layout home header="Now Showing">
       <Head>
         <title>{siteTitle}</title>
       </Head>

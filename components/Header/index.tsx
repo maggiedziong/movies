@@ -10,12 +10,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = () => {
+const Header = ({ title }: { title?: string }) => {
   const classes = useStyles();
 
   return (
     <header className={classes.header}>
-      <Typography variant="h1">Now Showing</Typography>
+      <Typography variant="h1">{title}</Typography>
     </header>
   );
 };

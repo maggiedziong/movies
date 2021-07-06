@@ -101,7 +101,9 @@ export const genreList = async () => {
 export const filmDetails = async (slug) => {
   const allMovies = await sortMovies();
   const getID = allMovies.find((m) => m.slug === slug).id;
-  const film = await fetchAPI(`movie/${getID}&append_to_response=videos`);
+  const film = await fetchAPI(
+    `movie/${getID}&append_to_response=videos,images`
+  );
   console.log("film");
   console.log(film);
 
