@@ -1,7 +1,7 @@
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, Container } from "@material-ui/core";
 import MovieGrid from "../components/MovieGrid";
 import GenreFilter from "../components/GenreFilter";
 import RatingFilter from "../components/RatingFilter";
@@ -66,34 +66,36 @@ const Home = ({ movieContent, genreContent }) => {
         <title>{siteTitle}</title>
       </Head>
 
-      {loading ? (
-        <div className={classes.loaderWrapper}>
-          <LinearProgress className={classes.progress} />
-        </div>
-      ) : (
-        <>
-          <div className={classes.filterWrapper}>
-            <div>
-              <GenreFilter
-                genreFilter={genreContent}
-                activeFilter={genreFilter}
-                filterAction={(genre) => filterByGenre(genre)}
-              />
-              <RatingFilter
-                rating={ratingFilter}
-                filterAction={(r) => setRatingFilter(r)}
-              />
-            </div>
-            <SortBy sortAction={(s) => setSortBy(s)} />
+      <Container>
+        {loading ? (
+          <div className={classes.loaderWrapper}>
+            <LinearProgress className={classes.progress} />
           </div>
-          <MovieGrid
-            movies={movies}
-            filterGenres={genreFilter}
-            filterRating={ratingFilter}
-            sortBy={sortBy}
-          />
-        </>
-      )}
+        ) : (
+          <>
+            <div className={classes.filterWrapper}>
+              <div>
+                <GenreFilter
+                  genreFilter={genreContent}
+                  activeFilter={genreFilter}
+                  filterAction={(genre) => filterByGenre(genre)}
+                />
+                <RatingFilter
+                  rating={ratingFilter}
+                  filterAction={(r) => setRatingFilter(r)}
+                />
+              </div>
+              <SortBy sortAction={(s) => setSortBy(s)} />
+            </div>
+            <MovieGrid
+              movies={movies}
+              filterGenres={genreFilter}
+              filterRating={ratingFilter}
+              sortBy={sortBy}
+            />
+          </>
+        )}
+      </Container>
     </Layout>
   );
 };

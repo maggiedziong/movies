@@ -29,15 +29,6 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "150%",
     marginBottom: "10px",
   },
-  genre: {
-    display: "inline-block",
-    padding: "0 5px",
-    background: theme.palette.primary.main,
-    color: theme.palette.background.default,
-  },
-  summary: {
-    display: "none",
-  },
 }));
 
 const MoviePod: React.FC<Props> = ({ movie }) => {
@@ -57,12 +48,6 @@ const MoviePod: React.FC<Props> = ({ movie }) => {
           ></div>
         </MUILink>
       </Link>
-
-      {/* <Box className={classes.genre}>
-        {movie.genres.map((genre) => (
-          <span key={genre}>{genre}</span>
-        ))}
-      </Box> */}
       <Rating
         name="half-rating-read"
         value={movie.rating}
@@ -71,8 +56,6 @@ const MoviePod: React.FC<Props> = ({ movie }) => {
         readOnly
         max={10}
       />
-
-      <div className={classes.summary}>{movie.summary}</div>
     </Box>
   );
 };

@@ -1,6 +1,4 @@
 import Head from "next/head";
-import Link from "next/link";
-import { Container } from "@material-ui/core";
 import Header from "./Header";
 
 export const siteTitle = "Wanna see a Movie?";
@@ -31,15 +29,8 @@ export default function Layout({
         <meta name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      {header && <Header title={header} />}
-      <Container> {children}</Container>
-      {!home && (
-        <div>
-          <Link href="/">
-            <a>← Back to home</a>
-          </Link>
-        </div>
-      )}
+      <Header title={header} home={home} />
+      {children}
     </div>
   );
 }

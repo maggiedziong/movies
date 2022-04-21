@@ -102,10 +102,17 @@ export const filmDetails = async (slug) => {
   const allMovies = await sortMovies();
   const getID = allMovies.find((m) => m.slug === slug).id;
   const film = await fetchAPI(
-    `movie/${getID}&append_to_response=videos,images`
+    `movie/${getID}`,
+    "&append_to_response=videos,images"
   );
   console.log("film");
   console.log(film);
 
   return film.data;
+};
+
+export const doSearch = async (query) => {
+  const result = await fetchAPI(`search/movie/`, `&query=${query}`);
+  console.log(result);
+  return result;
 };

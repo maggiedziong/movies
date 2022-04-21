@@ -18,6 +18,7 @@ const theme = createMuiTheme({
   },
   palette: {
     type: "dark",
+
     primary: {
       main: "#DAA520",
     },
@@ -26,6 +27,9 @@ const theme = createMuiTheme({
     },
     error: {
       main: "#e83b46",
+    },
+    background: {
+      default: "#1a1d29",
     },
   },
   typography: {
